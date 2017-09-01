@@ -1,7 +1,7 @@
 require_relative 'spec_helper'
 
 describe Hotel::DateRange do
-  describe 'basics' do
+  describe 'consructor' do
     it 'Can be initialized with two dates' do
       checkin = Date.new(2017, 01, 01)
       checkout = checkin + 3
