@@ -106,29 +106,63 @@ describe Hotel::Hotel do
       @checkin = Date.new(2017, 1, 1)
       @checkout = @checkin + 3
       @rate = 75
-      @block = @hotel.build_block(@num_rooms, @checkin, @checkout, @rate)
     end
 
-    it "builds a block" do
-      @block.must_be_kind_of Hotel::RoomBlock
+    describe "basics" do
+      before do
+        @block = @hotel.build_block(@num_rooms, @checkin, @checkout, @rate)
+      end
+      it "builds a block" do
+        @block.must_be_kind_of Hotel::RoomBlock
+      end
+
+      it "assigns the right number of rooms to the block" do
+        @block.rooms.length.must_equal @num_rooms
+      end
+
+      it "tracks checkin, checkout and rate" do
+        @block.checkin.must_equal @checkin
+        @block.checkout.must_equal @checkout
+        @block.rate.must_equal @rate
+      end
     end
 
-    it "assigns the right number of rooms to the block" do
-      @block.rooms.length.must_equal @num_rooms
-    end
+    it "reduces the number of available rooms" do
+      before_count = @hotel.available_rooms(@checkin, @checkout).length
 
-    it "tracks checkin, checkout and rate" do
-      @block.checkin.must_equal @checkin
-      @block.checkout.must_equal @checkout
-      @block.rate.must_equal @rate
+      @hotel.build_block(@num_rooms, @checkin, @checkout, @rate)
+
+      after_count = @hotel.available_rooms(@checkin, @checkout).length
+      after_count.must_equal (before_count - @num_rooms)
     end
 
     it "can reserve the last rooms in the hotel" do
+      rooms = @hotel.available_rooms(@checkin, @checkout)
+      (rooms.length - @num_rooms).times do
+        @hotel.reserve(rooms.pop, @checkin, @checkout)
+      end
 
+      @hotel.build_block(@num_rooms, @checkin, @checkout, @rate)
     end
 
     it "is an error to build a block if there are not enough rooms available" do
+      rooms = @hotel.available_rooms(@checkin, @checkout)
+      (rooms.length - @num_rooms + 1).times do
+        @hotel.reserve(rooms.pop, @checkin, @checkout)
+      end
 
+      proc {
+        @hotel.build_block(@num_rooms, @checkin, @checkout, @rate)
+      }.must_raise
+    end
+
+    it "is an error to build a block with no rooms" do
+      proc {
+        @hotel.build_block(0, @checkin, @checkout, @rate)
+      }.must_raise
+      proc {
+        @hotel.build_block(-1, @checkin, @checkout, @rate)
+      }.must_raise
     end
   end
 
