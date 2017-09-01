@@ -30,6 +30,18 @@ describe Hotel::Hotel do
       end
     end
 
+    it "raises an error if no rooms are available" do
+      room = 12
+
+      # Reserve the room once
+      @hotel.reserve(room, @checkin, @checkout)
+
+      # Attempt to reserve the room again
+      proc {
+        @hotel.reserve(room, @checkin, @checkout)
+      }.must_raise Hotel::Hotel::AlreadyReservedError
+    end
+
     it "returns a reservation with dates set" do
       reservation = @hotel.reserve(12, @checkin, @checkout)
 

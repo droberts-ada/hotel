@@ -2,6 +2,8 @@ require_relative 'reservation'
 
 module Hotel
   class Hotel
+    class AlreadyReservedError < StandardError ; end
+
     attr_reader :reservations, :rooms, :room_rate
 
     def initialize
@@ -11,10 +13,17 @@ module Hotel
     end
 
     def reserve(room, checkin, checkout)
+      # Check that the room exists
       unless @rooms.include? room
         raise ArgumentError.new("No such room #{room}")
       end
 
+      # Check that the room is available
+      unless available_rooms(checkin, checkout).include? room
+        raise AlreadyReservedError.new("Room #{room} already has a reservation between #{checkin} and #{checkout}")
+      end
+
+      # Create the reservation
       reservation = Reservation.new(room, checkin, checkout, @room_rate)
       @reservations << reservation
 
