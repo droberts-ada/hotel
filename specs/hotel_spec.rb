@@ -100,7 +100,37 @@ describe Hotel::Hotel do
     end
   end
 
-  
+  describe "build_block" do
+    before do
+      @num_rooms = 3
+      @checkin = Date.new(2017, 1, 1)
+      @checkout = @checkin + 3
+      @rate = 75
+      @block = @hotel.build_block(@num_rooms, @checkin, @checkout, @rate)
+    end
+
+    it "builds a block" do
+      @block.must_be_kind_of Hotel::RoomBlock
+    end
+
+    it "assigns the right number of rooms to the block" do
+      @block.rooms.length.must_equal @num_rooms
+    end
+
+    it "tracks checkin, checkout and rate" do
+      @block.checkin.must_equal @checkin
+      @block.checkout.must_equal @checkout
+      @block.rate.must_equal @rate
+    end
+
+    it "can reserve the last rooms in the hotel" do
+
+    end
+
+    it "is an error to build a block if there are not enough rooms available" do
+
+    end
+  end
 
   describe "reserve_from_block" do
     before do

@@ -42,6 +42,7 @@ module Hotel
     end
 
     def build_block(num_rooms, checkin, checkout, rate)
+      return RoomBlock.new(@rooms.first(3), checkin, checkout, rate)
     end
 
     def reserve_from_block(block)
