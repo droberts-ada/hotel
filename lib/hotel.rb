@@ -40,5 +40,13 @@ module Hotel
       reserved_rooms = bookings.map { |res| res.room }
       return @rooms - reserved_rooms
     end
+
+    def build_block(num_rooms, checkin, checkout, rate)
+    end
+
+    def reserve_from_block(block)
+      room = block.reserve_room
+      reservation = Reservation.new(room, block.checkin, block.checkout, block.rate)
+    end
   end
 end

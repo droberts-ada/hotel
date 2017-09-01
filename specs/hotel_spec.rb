@@ -99,4 +99,43 @@ describe Hotel::Hotel do
       @hotel.available_rooms(@date, @date + 1).must_equal @hotel.rooms
     end
   end
+
+  
+
+  describe "reserve_from_block" do
+    before do
+      checkin = Date.new(2017, 1, 1)
+      @block = Hotel::RoomBlock.new([1, 2, 3], checkin, checkin + 3, 50)
+    end
+
+    it "returns a reservation matching the block dates" do
+      reservation = @hotel.reserve_from_block(@block)
+
+      reservation.must_be_kind_of Hotel::Reservation
+
+      reservation.checkin.must_equal @block.checkin
+      reservation.checkout.must_equal @block.checkout
+    end
+
+    it "takes a room from the block" do
+      reservation = @hotel.reserve_from_block(@block)
+
+      @block.rooms.must_include reservation.room
+    end
+
+    it "respects the price from the block" do
+      reservation = @hotel.reserve_from_block(@block)
+
+      reservation.rate.must_equal @block.rate
+    end
+
+    it "is an error to reserve from a block with no available_rooms" do
+      3.times do
+        @hotel.reserve_from_block(@block)
+      end
+      proc {
+        @hotel.reserve_from_block(@block)
+      }.must_raise
+    end
+  end
 end

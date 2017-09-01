@@ -8,6 +8,12 @@ describe Hotel::RoomBlock do
       @checkout = @checkin + 3
       @rate = 50
     end
+
+    it "is a date range" do
+      block = Hotel::RoomBlock.new(@rooms, @checkin, @checkout, @rate)
+      block.must_be_kind_of Hotel::DateRange
+    end
+
     it "takes rooms, dates and a rate" do
       block = Hotel::RoomBlock.new(@rooms, @checkin, @checkout, @rate)
 
