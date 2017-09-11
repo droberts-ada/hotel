@@ -36,20 +36,23 @@ module Hotel
     end
 
     def available_rooms(checkin, checkout)
+      # Strategy: Start with a list of all rooms, remove
+      # rooms that are blocked or reserved for that date
       dates = DateRange.new(checkin, checkout)
       available_rooms = @rooms
 
-      # Remove all blocked out rooms
+      # Select blocks that overlap this date
       overlap_blocks = @blocks.select do |block|
         block.overlaps(dates)
       end
-      # TODO: is this correct?
+
+      # Put together a big list of all the rooms for those blocks
       blocked_rooms = overlap_blocks.reduce([]) do |memo, block|
         memo += block.rooms
       end
       available_rooms -= blocked_rooms
 
-      # Remove all reserved rooms
+      # Get a list of all rooms reserved for that date
       overlap_reservations = @reservations.select do |res|
         res.overlaps(dates)
       end
@@ -58,6 +61,7 @@ module Hotel
       end
 
       available_rooms -= reserved_rooms
+
       return available_rooms
     end
 
@@ -66,12 +70,15 @@ module Hotel
       if rooms.length < num_rooms
         raise AlreadyReservedError("Not enough rooms available")
       end
+
       block = RoomBlock.new(rooms.first(num_rooms), checkin, checkout, rate)
       @blocks << block
       return block
     end
 
     def reserve_from_block(block)
+      # RoomBlock#reserve_room will raise an error if there
+      # aren't enough rooms, so we don't need to here
       room = block.reserve_room
       reservation = Reservation.new(room, block.checkin, block.checkout, block.rate)
     end

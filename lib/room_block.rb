@@ -8,6 +8,7 @@ module Hotel
       if rooms.empty?
         raise ArgumentError.new("Can't create a block without any rooms")
       end
+
       super(checkin, checkout)
       @rooms = rooms
       @available_rooms = rooms.dup
@@ -23,6 +24,7 @@ module Hotel
       unless has_rooms?
         raise NoRoomsError.new("All rooms are reserved!")
       end
+
       room = @available_rooms.pop
       @reserved_rooms << room
       return room

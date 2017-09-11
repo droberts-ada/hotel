@@ -8,6 +8,7 @@ module Hotel
       unless checkout > checkin
         raise InvalidDateRange.new("Invalid dates #{checkin} to #{checkout}")
       end
+
       @checkin = checkin
       @checkout = checkout
     end
