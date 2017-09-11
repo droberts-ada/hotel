@@ -87,7 +87,7 @@ describe Hotel::DateRange do
       @range.overlaps(test_range).must_equal false
     end
 
-    it "returns false for a range starting on the checkout date" do
+    it "returns false for a range ending on the checkin date" do
       checkin = @range.checkin - 3
       checkout = @range.checkin
       test_range = Hotel::DateRange.new(checkin, checkout)
