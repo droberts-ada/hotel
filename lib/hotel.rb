@@ -1,8 +1,10 @@
-require_relative 'reservation'
+require_relative "date_range"
+require_relative "reservation"
+require_relative "room_block"
 
 module Hotel
   class Hotel
-    class AlreadyReservedError < StandardError ; end
+    class AlreadyReservedError < StandardError; end
 
     attr_reader :reservations, :rooms, :room_rate
 
